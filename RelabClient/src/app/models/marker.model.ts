@@ -14,5 +14,45 @@ export class Marker {
             this.icon = { url: './assets/img/electricity.ico' };
              this.label = "";
         }
+        if(this.label.includes("solide"))
+        {
+            this.icon = { url: './assets/img/tree-50-32.ico' };
+             this.label = "";
+        }
+        if(this.label.includes("Olio"))
+        {
+            this.icon = { url: './assets/img/water-32.ico' };
+             this.label = "";
+        }
+        if(this.label.includes("Teleriscaldamento"))
+        {
+            this.icon = { url: './assets/img/power-32.ico' };
+             this.label = "";
+        }
+        if(this.label.includes("RSU"))
+        {
+            this.icon = { url: './assets/img/trash-9-32.ico' };
+             this.label = "";
+        }
+        if(this.label.includes("liquide"))
+        {
+            this.icon = { url: './assets/img/toxic-32.ico' };
+             this.label = "";
+        }
+        if(this.label.includes("NULL"))
+        {
+            this.icon = { url: './assets/img/question-mark-6-32.ico' };
+             this.label = "";
+        }
+        if(this.label.includes("GPL"))
+        {
+            this.icon = { url: './assets/img/gas-pump-2-32.ico' };
+             this.label = "";
+        }
+        if(this.label.includes("Gasolio"))
+        {
+            this.icon = { url: './assets/img/warning-22-32.ico' };
+             this.label = "";
+        }
     }
 }

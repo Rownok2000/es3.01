@@ -41,10 +41,10 @@ export class AppComponent implements OnInit {
  }
 
   ngOnInit() {
-    this.obsGeoData = this.http.get<GeoFeatureCollection>("https://3000-aadbf755-4a1e-4bfa-af07-602f84efe0c0.ws-eu01.gitpod.io/");
+    this.obsGeoData = this.http.get<GeoFeatureCollection>("https://3000-abc12dab-aff6-43b4-970b-85ebba54bd99.ws-eu01.gitpod.io/");
     this.obsGeoData.subscribe(this.prepareData);
     //Effettua la chiamatata al server per ottenere l’elenco dei vettori energetici
-    this.obsCiVett = this.http.get<Ci_vettore[]>("https://3000-aadbf755-4a1e-4bfa-af07-602f84efe0c0.ws-eu01.gitpod.io/ci_vettore/436");
+    this.obsCiVett = this.http.get<Ci_vettore[]>("https://3000-abc12dab-aff6-43b4-970b-85ebba54bd99.ws-eu01.gitpod.io/ci_vettore/187");
     this.obsCiVett.subscribe(this.prepareCiVettData);
   }
 
