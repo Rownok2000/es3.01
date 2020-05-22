@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {Ci_vettore} from './models/ci_vett.model';
 import { Marker } from './models/marker.model';
+import { MouseEvent } from '@agm/core';
 
 @Component({
   selector: 'app-root',
@@ -21,6 +22,10 @@ export class AppComponent implements OnInit {
   lat: number = 45.45227445505016;
   obsCiVett : Observable<Ci_vettore[]>; //Crea un observable per ricevere i vettori energetici
   markers: Marker [];
+  circleLat : number = 0; //Latitudine e longitudine iniziale del cerchio
+  circleLng: number = 0;
+  maxRadius: number = 400; //Voglio evitare raggi troppo grossi
+  radius : number = this.maxRadius;
   constructor(public http: HttpClient) {
   }
 
@@ -32,22 +37,66 @@ export class AppComponent implements OnInit {
     //Metodo che riceve i dati e li aggiunge ai marker
   prepareCiVettData = (data: Ci_vettore[]) =>
   {
-    console.log(data); //Verifica di ricevere i vettori energetici
+    let latTot = 0; //Uso queste due variabili per calcolare latitudine e longitudine media
+    let lngTot = 0; //E centrare la mappa
+
+    console.log(data);
     this.markers = [];
-    for (const iterator of data) { //Per ogni oggetto del vettore creoa un Marker
+
+    for (const iterator of data) {
       let m = new Marker(iterator.WGS84_X,iterator.WGS84_Y,iterator.CI_VETTORE);
+      latTot += m.lat; //Sommo tutte le latitutidini e longitudini
+      lngTot += m.lng;
       this.markers.push(m);
     }
- }
-
-  ngOnInit() {
-    this.obsGeoData = this.http.get<GeoFeatureCollection>("https://3000-abc12dab-aff6-43b4-970b-85ebba54bd99.ws-eu01.gitpod.io/");
-    this.obsGeoData.subscribe(this.prepareData);
-    //Effettua la chiamatata al server per ottenere l’elenco dei vettori energetici
-    this.obsCiVett = this.http.get<Ci_vettore[]>("https://3000-abc12dab-aff6-43b4-970b-85ebba54bd99.ws-eu01.gitpod.io/ci_vettore/187");
-    this.obsCiVett.subscribe(this.prepareCiVettData);
+    this.lng = lngTot/data.length; //Commenta qui
+    this.lat = latTot/data.length;
+    this.zoom = 16;
   }
 
+  ngOnInit() {
+    this.obsGeoData = this.http.get<GeoFeatureCollection>("https://3000-fe51fb7c-e1b1-4a5b-8b65-968b92fe3702.ws-eu01.gitpod.io/");
+    this.obsGeoData.subscribe(this.prepareData);
+    //Effettua la chiamatata al server per ottenere l’elenco dei vettori energetici
+  }
+  cambiaFoglio(foglio) : boolean
+  {
+    let val = foglio.value; //Commenta qui
+    this.obsCiVett = this.http.get<Ci_vettore[]>(`https://3000-fe51fb7c-e1b1-4a5b-8b65-968b92fe3702.ws-eu01.gitpod.io/ci_vettore/${val}`);  //Commenta qui
+    this.obsCiVett.subscribe(this.prepareCiVettData); //Commenta qui
+    console.log(val);
+    return false;
+  }
+
+  mapClicked($event: MouseEvent) {
+    this.circleLat = $event.coords.lat; //Queste sono le coordinate cliccate
+    this.circleLng = $event.coords.lng; //Sposto il centro del cerchio qui
+    this.lat = this.circleLat; //Sposto il centro della mappa qui
+    this.lng = this.circleLng;
+    this.zoom = 15;  //Zoom sul cerchio
+  }
+  circleRedim(newRadius : number){
+    console.log(newRadius) //posso leggere sulla console il nuovo raggio
+    this.radius = newRadius;  //Ogni volta che modifico il cerchio, ne salvo il raggio
+  }
+  circleDoubleClicked(circleCenter)
+  {
+    console.log(circleCenter); //Voglio ottenere solo i valori entro questo cerchio
+    console.log(this.radius);
+
+    this.circleLat = circleCenter.coords.lat; //Aggiorno le coordinate del cerchio
+    this.circleLng = circleCenter.coords.lng; //Aggiorno le coordinate del cerchio
+
+    //Non conosco ancora le prestazioni del DB, non voglio fare ricerche troppo onerose
+    if(this.radius > this.maxRadius)
+    {
+      console.log("area selezionata troppo vasta sarà reimpostata a maxRadius");
+       this.radius = this.maxRadius;
+    }
+    console.log ("raggio in gradi " + (this.radius * 0.00001)/1.1132)
+
+    //Voglio spedire al server una richiesta che mi ritorni tutte le abitazioni all'interno del cerchio
+  }
   styleFunc = (feature) => {
     return ({
       clickable: false,
