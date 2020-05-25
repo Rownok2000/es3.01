@@ -55,14 +55,14 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.obsGeoData = this.http.get<GeoFeatureCollection>("https://3000-fe51fb7c-e1b1-4a5b-8b65-968b92fe3702.ws-eu01.gitpod.io/");
+    this.obsGeoData = this.http.get<GeoFeatureCollection>("https://3000-b000e620-b380-41e7-bdf7-308686199961.ws-eu01.gitpod.io/");
     this.obsGeoData.subscribe(this.prepareData);
     //Effettua la chiamatata al server per ottenere l’elenco dei vettori energetici
   }
   cambiaFoglio(foglio) : boolean
   {
     let val = foglio.value; //Commenta qui
-    this.obsCiVett = this.http.get<Ci_vettore[]>(`https://3000-fe51fb7c-e1b1-4a5b-8b65-968b92fe3702.ws-eu01.gitpod.io/ci_vettore/${val}`);  //Commenta qui
+    this.obsCiVett = this.http.get<Ci_vettore[]>(`https://3000-b000e620-b380-41e7-bdf7-308686199961.ws-eu01.gitpod.io/ci_vettore/${val}`);  //Commenta qui
     this.obsCiVett.subscribe(this.prepareCiVettData); //Commenta qui
     console.log(val);
     return false;
@@ -96,6 +96,16 @@ export class AppComponent implements OnInit {
     console.log ("raggio in gradi " + (this.radius * 0.00001)/1.1132)
 
     //Voglio spedire al server una richiesta che mi ritorni tutte le abitazioni all'interno del cerchio
+
+  let raggioInGradi = (this.radius * 0.00001)/1.1132;
+  //Posso riusare lo stesso observable e lo stesso metodo di gestione del metodo
+  //cambiaFoglio poichè riceverò lo stesso tipo di dati
+  //Divido l'url andando a capo per questioni di leggibilità non perchè sia necessario
+    this.obsCiVett = this.http.get<Ci_vettore[]>(`http://https://3000-b000e620-b380-41e7-bdf7-308686199961.ws-eu01.gitpod.io//ci_geovettore/
+    ${this.circleLat}/
+    ${this.circleLng}/
+    ${raggioInGradi}`);
+    this.obsCiVett.subscribe(this.prepareCiVettData);
   }
   styleFunc = (feature) => {
     return ({
