@@ -49,7 +49,7 @@ export class AppComponent implements OnInit {
       lngTot += m.lng;
       this.markers.push(m);
     }
-    this.lng = lngTot/data.length; //Commenta qui
+    this.lng = lngTot/data.length; //Commenta qui: qua otteniema la media tramite operazione e grazie a questo valore centriamo la mappa
     this.lat = latTot/data.length;
     this.zoom = 16;
   }
@@ -61,12 +61,13 @@ export class AppComponent implements OnInit {
   }
   cambiaFoglio(foglio) : boolean
   {
-    let val = foglio.value; //Commenta qui
-    this.obsCiVett = this.http.get<Ci_vettore[]>(`https://3000-b000e620-b380-41e7-bdf7-308686199961.ws-eu01.gitpod.io/ci_vettore/${val}`);  //Commenta qui
-    this.obsCiVett.subscribe(this.prepareCiVettData); //Commenta qui
+    let val = foglio.value; //Commenta qui: creiamo variabile val che assume il valore del foglio specificato nella label
+    this.obsCiVett = this.http.get<Ci_vettore[]>(`https://3000-b000e620-b380-41e7-bdf7-308686199961.ws-eu01.gitpod.io/ci_vettore/${val}`); //Commenta qui: facciamo una richiesta http.get al server
+    this.obsCiVett.subscribe(this.prepareCiVettData); //Commenta qui: qui ci "sottoscriviamo e quando arrivano i dati viene lanciato il metodo prepareCiVettData"
     console.log(val);
     return false;
   }
+
 
   mapClicked($event: MouseEvent) {
     this.circleLat = $event.coords.lat; //Queste sono le coordinate cliccate
